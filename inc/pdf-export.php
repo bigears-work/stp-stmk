@@ -36,10 +36,7 @@ function stolpersteine_pdf_export() {
     $content   = apply_filters( 'the_content', get_post_field( 'post_content', $post_id ) );
     $thumbnail = get_the_post_thumbnail_url( $post_id, 'large' );
 
-    $adresse = get_field( 'stolpersteine_textmedium', $post_id );
-    if ( ! $adresse ) {
-        $adresse = get_post_meta( $post_id, '_stolpersteine_textmedium', true );
-    }
+    $adresse = get_post_meta( $post_id, 'stolpersteine_textmedium', true );
 
     // Opfergruppen
     $opfergruppen_terms = get_the_terms( $post_id, 'opfergruppen' );

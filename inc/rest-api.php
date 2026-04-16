@@ -38,8 +38,8 @@ function stolpersteine_expose_acf_in_rest() {
 }
 
 function stolpersteine_get_acf_koordinaten( $post ) {
-    $coords = get_field( 'koordinaten', $post['id'] );
-    if ( empty( $coords['lat'] ) || empty( $coords['lng'] ) ) {
+    $coords = get_post_meta( $post['id'], 'koordinaten', true );
+    if ( ! is_array( $coords ) || empty( $coords['lat'] ) || empty( $coords['lng'] ) ) {
         return null;
     }
     return array(
@@ -50,10 +50,7 @@ function stolpersteine_get_acf_koordinaten( $post ) {
 }
 
 function stolpersteine_get_acf_adresse( $post ) {
-    $value = get_field( 'stolpersteine_textmedium', $post['id'] );
-    if ( ! $value ) {
-        $value = get_post_meta( $post['id'], '_stolpersteine_textmedium', true );
-    }
+    $value = get_post_meta( $post['id'], 'stolpersteine_textmedium', true );
     return sanitize_text_field( $value ? $value : '' );
 }
 
@@ -227,20 +224,19 @@ function stolpersteine_build_tax_query( $request ) {
 function stolpersteine_format_post( $post, $map_only = false, $filter_only = false ) {
 
     if ( $map_only ) {
-        $coords = get_field( 'koordinaten', $post->ID );
+        $coords  = get_post_meta( $post->ID, 'koordinaten', true );
+        $adresse = get_post_meta( $post->ID, 'stolpersteine_textmedium', true );
         return array(
-            'id'    => $post->ID,
-            'title' => esc_html( $post->post_title ),
-            'url'   => get_permalink( $post->ID ),
-            'lat'   => isset( $coords['lat'] ) ? (float) $coords['lat'] : null,
-            'lng'   => isset( $coords['lng'] ) ? (float) $coords['lng'] : null,
+            'id'      => $post->ID,
+            'title'   => esc_html( $post->post_title ),
+            'url'     => get_permalink( $post->ID ),
+            'adresse' => esc_html( $adresse ? $adresse : '' ),
+            'lat'     => is_array( $coords ) && isset( $coords['lat'] ) ? (float) $coords['lat'] : null,
+            'lng'     => is_array( $coords ) && isset( $coords['lng'] ) ? (float) $coords['lng'] : null,
         );
     }
 
-    $adresse = get_field( 'stolpersteine_textmedium', $post->ID );
-    if ( ! $adresse ) {
-        $adresse = get_post_meta( $post->ID, '_stolpersteine_textmedium', true );
-    }
+    $adresse = get_post_meta( $post->ID, 'stolpersteine_textmedium', true );
 
     $opfergruppen_terms = get_the_terms( $post->ID, 'opfergruppen' );
     $jahr_terms         = get_the_terms( $post->ID, 'jahr' );
@@ -284,7 +280,7 @@ function stolpersteine_format_post( $post, $map_only = false, $filter_only = fal
     }
 
     $zuordnung_terms = get_the_terms( $post->ID, 'zuordnung' );
-    $coords          = get_field( 'koordinaten', $post->ID );
+    $coords          = get_post_meta( $post->ID, 'koordinaten', true );
 
     return array(
         'id'           => $post->ID,
@@ -294,8 +290,8 @@ function stolpersteine_format_post( $post, $map_only = false, $filter_only = fal
         'thumbnail'    => get_the_post_thumbnail_url( $post->ID, 'medium' ) ?: null,
         'excerpt'      => wp_trim_words( get_the_excerpt( $post ), 20, '...' ),
         'adresse'      => esc_html( $adresse ? $adresse : '' ),
-        'lat'          => isset( $coords['lat'] ) ? (float) $coords['lat'] : null,
-        'lng'          => isset( $coords['lng'] ) ? (float) $coords['lng'] : null,
+        'lat'          => is_array( $coords ) && isset( $coords['lat'] ) ? (float) $coords['lat'] : null,
+        'lng'          => is_array( $coords ) && isset( $coords['lng'] ) ? (float) $coords['lng'] : null,
         'opfergruppen' => is_array( $opfergruppen_terms ) ? wp_list_pluck( $opfergruppen_terms, 'name' ) : array(),
         'jahr'         => is_array( $jahr_terms )         ? wp_list_pluck( $jahr_terms, 'name' )         : array(),
         'bezirk'       => array_merge(

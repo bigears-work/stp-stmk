@@ -8,12 +8,11 @@
 
     if ( ! form || ! tbody ) return;
 
-    var PER_PAGE = 50;
+    var PER_PAGE = 24;
 
     var currentPage   = 1;
     var debounceTimer = null;
-    var allResults    = [];   // kompletter Datensatz — einmalig geladen
-    var lastFiltered  = [];   // nach Filter + Sortierung
+    var currentXhr    = null;
 
     // Standard: alphabetisch nach Nachname aufsteigend
     var sortCol = 'name';
@@ -46,27 +45,38 @@
     }
 
     // --------------------------------------------------------
-    // URL für initialen Komplett-Load
+    // URL bauen
     // --------------------------------------------------------
-    function buildLoadUrl( postType ) {
-        return stpData.apiBase +
-            '?post_type=' + encodeURIComponent( postType ) +
-            '&per_page=500' +
-            '&page=1' +
-            '&filter_only=true';
+    function buildUrl() {
+        var state = getFilterState();
+        var params = [
+            'post_type='    + encodeURIComponent( state.post_type || 'both' ),
+            'opfergruppen=' + encodeURIComponent( state.opfergruppen ),
+            'bezirk='       + encodeURIComponent( state.bezirk ),
+            'jahr='         + encodeURIComponent( state.jahr ),
+            'search='       + encodeURIComponent( state.search ),
+            'per_page='     + PER_PAGE,
+            'page='         + currentPage,
+            'filter_only=true'
+        ];
+        return stpData.apiBase + '?' + params.join( '&' );
     }
 
     // --------------------------------------------------------
     // XHR
     // --------------------------------------------------------
-    function fetchAll( postType, callback ) {
+    function fetchData( callback ) {
+        if ( currentXhr ) currentXhr.abort();
+
         var xhr = new XMLHttpRequest();
-        xhr.open( 'GET', buildLoadUrl( postType ), true );
+        currentXhr = xhr;
+        xhr.open( 'GET', buildUrl(), true );
         xhr.setRequestHeader( 'X-WP-Nonce', stpData.nonce );
         xhr.setRequestHeader( 'Accept', 'application/json' );
 
         xhr.onreadystatechange = function () {
             if ( xhr.readyState !== 4 ) return;
+            if ( xhr.status === 0 )     return; // Aborted
             if ( xhr.status === 200 ) {
                 try {
                     callback( null, JSON.parse( xhr.responseText ) );
@@ -175,9 +185,9 @@
                     ? parts[ parts.length - 1 ] + ' ' + parts.slice( 0, -1 ).join( ' ' )
                     : ( clean || stone.title || '' );
             case 'adresse': return stone.adresse || '';
-            case 'opfer':   return stone.opfergruppen.map( function(t) { return t.name; } ).join( ', ' );
-            case 'bezirk':  return stone.bezirk.map( function(t) { return t.name; } ).join( ', ' );
-            case 'jahr':    return stone.jahr.map( function(t) { return t.name; } ).join( ', ' );
+            case 'opfer':   return ( stone.opfergruppen || [] ).map( function(t) { return t.name || t; } ).join( ', ' );
+            case 'bezirk':  return ( stone.bezirk       || [] ).map( function(t) { return t.name || t; } ).join( ', ' );
+            case 'jahr':    return ( stone.jahr         || [] ).map( function(t) { return t.name || t; } ).join( ', ' );
             default:        return '';
         }
     }
@@ -231,9 +241,11 @@
                 sortDir = 'asc';
             }
 
-            currentPage = 1;
+            // currentPage = 1; // Keep page when sorting? Usually yes, but user might want to stay. 
+            // Standard is to go to page 1.
+            currentPage = 1; 
             renderTable();
-            updateTheadState();
+            // updateTheadState() is called inside renderTable -> fetchData -> callback
         } );
     }
 
@@ -273,9 +285,9 @@
     // Row rendern
     // --------------------------------------------------------
     function renderRow( stone ) {
-        var opfer  = stone.opfergruppen.map( function(t) { return t.name; } ).join( ', ' );
-        var bezirk = stone.bezirk.map( function(t) { return t.name; } ).join( ', ' );
-        var jahr   = stone.jahr.map( function(t) { return t.name; } ).join( ', ' );
+        var opfer  = ( stone.opfergruppen || [] ).map( function(t) { return t.name || t; } ).join( ', ' );
+        var bezirk = ( stone.bezirk       || [] ).map( function(t) { return t.name || t; } ).join( ', ' );
+        var jahr   = ( stone.jahr         || [] ).map( function(t) { return t.name || t; } ).join( ', ' );
         return '<tr>' +
             '<td class="stp-col-name"><a href="' + stone.url + '">' + stone.title + '</a></td>' +
             '<td class="stp-col-adresse">' + ( stone.adresse || '—' ) + '</td>' +
@@ -286,51 +298,55 @@
     }
 
     // --------------------------------------------------------
-    // Tabelle rendern (Filter + Sort + Paginierung — alles lokal)
+    // Tabelle rendern (Server-seitig)
     // --------------------------------------------------------
     function renderTable() {
-        var state    = getFilterState();
-        var filtered = applyClientFilter( allResults, state );
-        var sorted   = sortResults( filtered );
+        setLoading( true );
 
-        lastFiltered = sorted;
+        fetchData( function ( err, data ) {
+            setLoading( false );
 
-        var totalItems = sorted.length;
-        var totalPages = Math.ceil( totalItems / PER_PAGE ) || 1;
-
-        // Seite korrigieren falls nötig
-        if ( currentPage > totalPages ) currentPage = totalPages;
-
-        var start  = ( currentPage - 1 ) * PER_PAGE;
-        var end    = Math.min( start + PER_PAGE, totalItems );
-        var paged  = sorted.slice( start, end );
-
-        if ( ! paged.length ) {
-            tbody.innerHTML =
-                '<tr><td colspan="5" class="stp-no-results">' +
-                'Keine Stolpersteine gefunden.' +
-                '</td></tr>';
-        } else {
-            var html = '';
-            for ( var i = 0; i < paged.length; i++ ) {
-                html += renderRow( paged[ i ] );
+            if ( err || ! data ) {
+                if ( err !== null ) { // Ignoriere abort
+                    tbody.innerHTML =
+                        '<tr><td colspan="5" class="stp-error">' +
+                        'Fehler beim Laden. Bitte die Seite neu laden.' +
+                        '</td></tr>';
+                }
+                return;
             }
-            tbody.innerHTML = html;
-        }
 
-        if ( countEl ) {
-            countEl.textContent = totalItems + ' Einträge';
-        }
+            var results    = data.results || [];
+            var totalItems = data.total   || 0;
+            var totalPages = data.total_pages || 1;
 
-        renderPagination( totalPages, currentPage );
-        updateTheadState();
-
-        if ( currentPage > 1 ) {
-            var table = document.getElementById( 'stp-table' );
-            if ( table ) {
-                table.scrollIntoView( { behavior: 'smooth', block: 'start' } );
+            if ( ! results.length ) {
+                tbody.innerHTML =
+                    '<tr><td colspan="5" class="stp-no-results">' +
+                    'Keine Stolpersteine gefunden.' +
+                    '</td></tr>';
+            } else {
+                var html = '';
+                for ( var i = 0; i < results.length; i++ ) {
+                    html += renderRow( results[ i ] );
+                }
+                tbody.innerHTML = html;
             }
-        }
+
+            if ( countEl ) {
+                countEl.textContent = totalItems + ' Einträge';
+            }
+
+            renderPagination( totalPages, currentPage );
+            updateTheadState();
+
+            if ( currentPage > 1 ) {
+                var table = document.getElementById( 'stp-table' );
+                if ( table ) {
+                    table.scrollIntoView( { behavior: 'smooth', block: 'start' } );
+                }
+            }
+        } );
     }
 
     // --------------------------------------------------------
@@ -467,7 +483,7 @@
     }
 
     // --------------------------------------------------------
-    // Init — einmaliger API-Call, dann alles lokal
+    // Init
     // --------------------------------------------------------
     initThead();
     updateTheadState();
@@ -478,20 +494,6 @@
 
     tbody.innerHTML = renderSkeleton();
 
-    var postType = getVal( 'post_type' ) || 'both';
-
-    fetchAll( postType, function ( err, data ) {
-
-        if ( err || ! data ) {
-            tbody.innerHTML =
-                '<tr><td colspan="5" class="stp-error">' +
-                'Fehler beim Laden. Bitte die Seite neu laden.' +
-                '</td></tr>';
-            return;
-        }
-
-        allResults = normalizeResults( data.results || [] );
-        renderTable();
-    } );
+    renderTable();
 
 } )();

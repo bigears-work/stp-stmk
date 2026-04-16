@@ -573,7 +573,13 @@ function stolpersteine_geocode_single() {
         ) );
     }
 
-    $adresse_raw = get_post_meta( $post_id, '_stolpersteine_textmedium', true );
+    $adresse_raw = get_post_meta( $post_id, 'stolpersteine_textmedium', true );
+    if ( empty( $adresse_raw ) ) {
+        $adresse_raw = get_post_meta( $post_id, '_stolpersteine_textmedium', true );
+        if ( $adresse_raw === 'field_ss_adresse' ) {
+            $adresse_raw = '';
+        }
+    }
     if ( empty( $adresse_raw ) ) {
         wp_send_json_success( array(
             'status'  => 'empty',
@@ -651,7 +657,13 @@ function stolpersteine_geocode_fehler_liste() {
 
     $result = array();
     foreach ( $posts as $post_id ) {
-        $adresse  = get_post_meta( $post_id, '_stolpersteine_textmedium', true );
+        $adresse = get_post_meta( $post_id, 'stolpersteine_textmedium', true );
+        if ( empty( $adresse ) || $adresse === 'field_ss_adresse' ) {
+            $adresse = get_post_meta( $post_id, '_stolpersteine_textmedium', true );
+            if ( $adresse === 'field_ss_adresse' ) {
+                $adresse = '';
+            }
+        }
         $result[] = array(
             'id'       => $post_id,
             'title'    => esc_html( get_the_title( $post_id ) ),

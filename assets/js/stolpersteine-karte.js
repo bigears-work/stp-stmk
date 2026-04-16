@@ -59,6 +59,18 @@
         var listeEl       = document.getElementById( 'stp-karte-liste' );
         var countEl       = document.getElementById( 'stp-karte-count' );
 
+        // Click-Handler für Listeneinträge — einmalig registrieren.
+        if ( listeEl ) {
+            listeEl.addEventListener( 'click', function ( e ) {
+                var item = e.target.closest( '[data-index]' );
+                if ( ! item ) return;
+                var idx = parseInt( item.getAttribute( 'data-index' ), 10 );
+                if ( isNaN( idx ) || ! markers[ idx ] ) return;
+                map.flyTo( { center: markers[ idx ].getLngLat(), zoom: 17 } );
+                markers[ idx ].togglePopup();
+            } );
+        }
+
         map.on( 'load', function () {
             ladeMarker();
         } );
@@ -98,7 +110,7 @@
                 jahr         : getVal( 'jahr' ),
                 search       : getVal( 'search' ),
                 map_only     : true,
-                per_page     : 200,
+                per_page     : 500,
             };
         }
 
@@ -129,8 +141,15 @@
 
             xhr.onreadystatechange = function () {
                 if ( xhr.readyState !== 4 ) return;
-                if ( xhr.status === 0 )     return;
-                if ( xhr.status !== 200 )   return;
+                if ( xhr.status === 0 )     return; // aborted
+
+                if ( xhr.status !== 200 ) {
+                    console.error( 'Karte: API-Fehler ' + xhr.status );
+                    if ( countEl ) countEl.textContent = 'Fehler beim Laden';
+                    if ( listeEl ) listeEl.innerHTML =
+                        '<p class="stp-error">Einträge konnten nicht geladen werden (HTTP ' + xhr.status + ').</p>';
+                    return;
+                }
 
                 try {
                     var data = JSON.parse( xhr.responseText );
@@ -138,6 +157,7 @@
                     aktualisiereListe( data.results || [], data.total || 0 );
                 } catch ( e ) {
                     console.error( 'Karte: Parse-Fehler', e );
+                    if ( countEl ) countEl.textContent = 'Fehler beim Laden';
                 }
             };
 
@@ -254,7 +274,7 @@
         }
     }
 
-    function initEinzelkarte( el ) {
+    function initEinzelkarte( el ) {"show "
 
         var lat  = parseFloat( el.getAttribute( 'data-lat' ) );
         var lng  = parseFloat( el.getAttribute( 'data-lng' ) );
