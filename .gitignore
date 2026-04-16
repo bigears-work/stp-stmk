@@ -1,0 +1,33 @@
+# Composer
+/vendor/
+/composer.lock
+
+# JetBrains IDE
+.idea/
+*.iws
+
+# OS-generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# WordPress specific (if applicable)
+# sitemap.xml
+# sitemap.xml.gz
+
+# ACF (WordPress Local JSON - Track this to sync fields across environments)
+# If you prefer to manage fields ONLY via the database, uncomment the line below:
+# acf-json/
+
+# Temporary files
+.output.txt

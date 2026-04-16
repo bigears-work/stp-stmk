@@ -1,0 +1,256 @@
+/* ============================================================
+   Stolpersteine Karte
+   ============================================================ */
+
+.stp-karte-wrap {
+    display: flex;
+    gap: 0;
+    border: 1px solid #e0e0e0;
+    border-radius: 1rem;
+    overflow: hidden;
+    min-height: 500px;
+}
+
+.stp-karte-sidebar {
+    width: 280px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    background: #fafafa;
+    border-right: 1px solid #e0e0e0;
+    overflow: hidden;
+}
+
+.stp-karte-sidebar .stp-filter-form {
+    padding: 1rem;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.stp-karte-sidebar .stp-filter-field {
+    margin-bottom: 0.75rem;
+}
+
+.stp-karte-sidebar .stp-filter-field:last-child {
+    margin-bottom: 0;
+}
+
+.stp-karte-sidebar .stp-filter-field label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #444;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    display: block;
+    margin-bottom: 0.2rem;
+}
+
+.stp-karte-sidebar .stp-filter-field input,
+.stp-karte-sidebar .stp-filter-field select {
+    width: 100%;
+    padding: 0.4rem 0.6rem;
+    border: 1px solid #ccc;
+    border-radius: .5rem;
+    font-size: 0.85rem;
+    background: #fff;
+    box-sizing: border-box;
+}
+
+.stp-karte-sidebar .stp-filter-field input:focus,
+.stp-karte-sidebar .stp-filter-field select:focus {
+    outline: 2px solid #c8a951;
+    outline-offset: 1px;
+    border-color: #c8a951;
+}
+
+.stp-karte-sidebar .stp-reset-btn {
+    width: 100%;
+    margin-top: 0.5rem;
+    padding: 0.4rem;
+    background: transparent;
+    border: 1px solid #ccc;
+    border-radius: .5rem;
+    font-size: 0.8rem;
+    cursor: pointer;
+    color: #666;
+    transition: background 0.15s, color 0.15s;
+}
+
+.stp-karte-sidebar .stp-reset-btn:hover {
+    background: #333;
+    color: #fff;
+    border-color: #333;
+}
+
+.stp-karte-liste {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0.5rem 0;
+}
+
+.stp-liste-eintrag {
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid #efefef;
+    font-size: 0.85rem;
+    line-height: 1.4;
+}
+
+.stp-liste-eintrag.hat-coords {
+    cursor: pointer;
+}
+
+.stp-liste-eintrag.hat-coords:hover {
+    background: #fdf8ec;
+}
+
+.stp-liste-eintrag.hat-coords:focus {
+    outline: 2px solid #c8a951;
+    outline-offset: -2px;
+}
+
+.stp-liste-name {
+    display: block;
+    font-weight: 500;
+}
+
+.stp-liste-name a {
+    color: #1a1a1a;
+    text-decoration: none;
+}
+
+.stp-liste-name a:hover {
+    color: #c8a951;
+}
+
+.stp-liste-adresse {
+    display: block;
+    color: #888;
+    font-size: 0.8rem;
+}
+
+.stp-ohne-coords-hinweis {
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
+    color: #aaa;
+    font-style: italic;
+    border-top: 1px solid #e8e8e8;
+    margin: 0;
+}
+
+.stp-karte-count {
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
+    color: #888;
+    border-top: 1px solid #e0e0e0;
+    background: #f5f5f5;
+    flex-shrink: 0;
+}
+
+.stp-karte-map {
+    flex: 1;
+    min-width: 0;
+}
+
+/* ============================================================
+   Modifier: liste="nein"
+   Sidebar schrumpft auf die Höhe des Filterformulars.
+   ============================================================ */
+
+.stp-karte-wrap--ohne-liste .stp-karte-sidebar {
+    overflow-y: visible;
+    height: auto;
+    align-self: flex-start;
+}
+
+/* ============================================================
+   Einzelkarte
+   ============================================================ */
+
+.stp-einzel-map {
+    width: 100%;
+    border-radius: 1rem;
+    overflow: hidden;
+    margin: 1rem 0;
+}
+
+.stp-keine-koordinaten {
+    font-size: 0.85rem;
+    color: #999;
+    font-style: italic;
+    margin-top: 0.5rem;
+}
+
+/* ============================================================
+   Marker & Popup
+   ============================================================ */
+
+.stp-marker {
+    width: 16px;
+    height: 16px;
+    background: #c8a951;
+    border: 2px solid #fff;
+    border-radius: 0.3rem;
+    cursor: pointer;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+    transition: transform 0.15s;
+}
+
+.stp-marker:hover {
+    transform: scale( 1.3 );
+}
+
+.stp-marker--einzel {
+    width: 20px;
+    height: 20px;
+    background: #c8a951;
+    border-radius: 0.3rem;
+}
+
+.stp-popup {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    font-size: 0.85rem;
+}
+
+.stp-popup-title {
+    font-weight: 600;
+    color: #1a1a1a;
+}
+
+.stp-popup-adresse {
+    color: #666;
+    font-size: 0.8rem;
+}
+
+.stp-popup-link {
+    color: #c8a951;
+    text-decoration: none;
+    font-size: 0.8rem;
+    margin-top: 0.25rem;
+}
+
+.stp-popup-link:hover {
+    text-decoration: underline;
+}
+
+/* ============================================================
+   Responsive
+   ============================================================ */
+
+@media ( max-width: 700px ) {
+    .stp-karte-wrap {
+        flex-direction: column;
+    }
+    .stp-karte-sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #e0e0e0;
+        max-height: 300px;
+    }
+    .stp-karte-wrap--ohne-liste .stp-karte-sidebar {
+        max-height: none;
+    }
+    .stp-karte-map {
+        height: 350px !important;
+    }
+}

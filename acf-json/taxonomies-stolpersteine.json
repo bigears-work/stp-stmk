@@ -1,0 +1,135 @@
+[
+    {
+        "key": "taxonomy_jahr",
+        "title": "Verlegejahr",
+        "singular_label": "Jahr",
+        "plural_label": "Jahre",
+        "taxonomy": "jahr",
+        "hierarchical": false,
+        "show_in_rest": true,
+        "rest_base": "",
+        "public": true,
+        "publicly_queryable": true,
+        "show_ui": true,
+        "show_in_menu": true,
+        "show_in_nav_menus": true,
+        "show_in_admin_bar": true,
+        "show_admin_column": true,
+        "rewrite": {
+            "slug": "jahr",
+            "with_front": true,
+            "hierarchical": false
+        },
+        "post_types": [
+            "stolpersteine",
+            "ststeiermark"
+        ],
+        "active": true
+    },
+    {
+        "key": "taxonomy_opfergruppen",
+        "title": "Opfergruppen",
+        "singular_label": "Opfergruppe",
+        "plural_label": "Opfergruppen",
+        "taxonomy": "opfergruppen",
+        "hierarchical": true,
+        "show_in_rest": true,
+        "rest_base": "",
+        "public": true,
+        "publicly_queryable": true,
+        "show_ui": true,
+        "show_in_menu": true,
+        "show_in_nav_menus": true,
+        "show_in_admin_bar": true,
+        "show_admin_column": true,
+        "rewrite": {
+            "slug": "opfergruppe",
+            "with_front": true,
+            "hierarchical": true
+        },
+        "post_types": [
+            "stolpersteine",
+            "ststeiermark"
+        ],
+        "active": true
+    },
+    {
+        "key": "taxonomy_zuordnung",
+        "title": "Familie / Zuordnung",
+        "singular_label": "Zuordnung",
+        "plural_label": "Zuordnungen",
+        "taxonomy": "zuordnung",
+        "hierarchical": false,
+        "show_in_rest": true,
+        "rest_base": "",
+        "public": true,
+        "publicly_queryable": true,
+        "show_ui": true,
+        "show_in_menu": true,
+        "show_in_nav_menus": true,
+        "show_in_admin_bar": true,
+        "show_admin_column": true,
+        "rewrite": {
+            "slug": "zuordnung",
+            "with_front": true,
+            "hierarchical": false
+        },
+        "post_types": [
+            "stolpersteine",
+            "ststeiermark"
+        ],
+        "active": true
+    },
+    {
+        "key": "taxonomy_bezirk",
+        "title": "Bezirk Graz",
+        "singular_label": "Bezirk",
+        "plural_label": "Bezirke",
+        "taxonomy": "bezirk",
+        "hierarchical": true,
+        "show_in_rest": true,
+        "rest_base": "",
+        "public": true,
+        "publicly_queryable": true,
+        "show_ui": true,
+        "show_in_menu": true,
+        "show_in_nav_menus": true,
+        "show_in_admin_bar": true,
+        "show_admin_column": true,
+        "rewrite": {
+            "slug": "bezirk",
+            "with_front": true,
+            "hierarchical": true
+        },
+        "post_types": [
+            "stolpersteine"
+        ],
+        "active": true
+    },
+    {
+        "key": "taxonomy_bezirksteiermark",
+        "title": "Bezirk Steiermark",
+        "singular_label": "Bezirk Steiermark",
+        "plural_label": "Bezirke Steiermark",
+        "taxonomy": "bezirksteiermark",
+        "hierarchical": true,
+        "show_in_rest": true,
+        "rest_base": "",
+        "public": true,
+        "publicly_queryable": true,
+        "show_ui": true,
+        "show_in_menu": true,
+        "show_in_nav_menus": true,
+        "show_in_admin_bar": true,
+        "show_admin_column": true,
+        "rewrite": {
+            "slug": "bezirk-steiermark",
+            "with_front": true,
+            "hierarchical": true
+        },
+        "post_types": [
+            "ststeiermark"
+        ],
+        "active": true
+    }
+]

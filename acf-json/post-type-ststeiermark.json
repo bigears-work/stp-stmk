@@ -1,0 +1,39 @@
+{
+    "key": "post_type_ststeiermark",
+    "title": "Stolpersteine Steiermark",
+    "menu_title": "Stolpersteine Steiermark",
+    "singular_label": "Stolperstein Steiermark",
+    "plural_label": "Stolpersteine Steiermark",
+    "post_type": "ststeiermark",
+    "icon": "dashicons-admin-site-alt3",
+    "show_in_rest": true,
+    "rest_base": "",
+    "has_archive": true,
+    "publicly_queryable": true,
+    "public": true,
+    "hierarchical": false,
+    "show_ui": true,
+    "show_in_menu": true,
+    "show_in_nav_menus": true,
+    "show_in_admin_bar": true,
+    "menu_position": 6,
+    "capability_type": "post",
+    "supports": [
+        "title",
+        "editor",
+        "thumbnail",
+        "excerpt"
+    ],
+    "taxonomies": [],
+    "rewrite": {
+        "slug": "stolpersteine-steiermark",
+        "with_front": true,
+        "feeds": false,
+        "pages": true
+    },
+    "query_var": true,
+    "can_export": true,
+    "delete_with_user": false,
+    "exclude_from_search": false,
+    "active": true
+}

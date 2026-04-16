@@ -1,0 +1,411 @@
+/* ============================================================
+   Stolpersteine Filter
+   ============================================================ */
+
+.stp-filter-wrap {
+    font-size: 0.95rem;
+}
+
+/* --- Filterzeile --- */
+
+.stp-filter-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: flex-end;
+    margin-bottom: 1.25rem;
+    padding: 1rem;
+    background: #f5f5f5;
+    border-radius: 4px;
+}
+
+/* flex-Werte nur wenn .stp-filter-controls ein Flex-Container ist,
+   d.h. auf Desktop. Auf Mobile wird er zu einem Grid-Container
+   umgebaut — dann greifen diese Werte nicht mehr. */
+.stp-filter-controls > .stp-filter-field {
+    flex: 1 1 160px;
+}
+
+/* Suchfeld: volle Breite → allein in Zeile 1 */
+.stp-filter-controls > .stp-filter-search {
+    flex: 1 1 100%;
+}
+
+.stp-filter-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.stp-reset-btn {
+    align-self: flex-end;
+    flex-shrink: 0;
+    padding: 0.45rem 1rem;
+    background: transparent;
+    border: 1px solid #999;
+    border-radius: 3px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    color: #555;
+    white-space: nowrap;
+    transition: background 0.15s, color 0.15s;
+}
+
+.stp-reset-btn:hover {
+    background: #333;
+    color: #fff;
+    border-color: #333;
+}
+
+.stp-filter-field label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #444;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.stp-filter-field input,
+.stp-filter-field select {
+    padding: 0.45rem 0.65rem;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    font-size: 0.9rem;
+    background: #fff;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.stp-filter-field input:focus,
+.stp-filter-field select:focus {
+    outline: 2px solid #c8a951;
+    outline-offset: 1px;
+    border-color: #c8a951;
+}
+
+/* --- Ergebnis-Meta --- */
+
+.stp-results-meta {
+    margin-bottom: 0.5rem;
+    font-size: 0.85rem;
+    color: #666;
+}
+
+/* --- Tabelle --- */
+
+.stp-table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.stp-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    transition: opacity 0.2s ease;
+}
+
+.stp-table thead th {
+    text-align: left;
+    background: #222;
+    color: #fff;
+    padding: 0;
+}
+
+.stp-sort-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    width: 100%;
+    padding: 0.6rem 0.75rem;
+    background: none;
+    border: none;
+    color: inherit;
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    white-space: nowrap;
+    text-align: left;
+    transition: background 0.15s;
+}
+
+.stp-sort-btn:hover {
+    background: rgba( 255, 255, 255, 0.12 );
+}
+
+.stp-sort-btn:focus-visible {
+    outline: 2px solid #c8a951;
+    outline-offset: -2px;
+}
+
+.stp-sort-icon {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+    opacity: 0.7;
+}
+
+.stp-table thead th.is-sorted {
+    background: #1a1a1a;
+}
+
+.stp-table thead th.is-sorted .stp-sort-icon {
+    opacity: 1;
+    color: #c8a951;
+}
+
+.stp-table tbody tr {
+    border-bottom: 1px solid #e8e8e8;
+    transition: background 0.1s;
+}
+
+.stp-table tbody tr:hover {
+    background: #fdf8ec;
+}
+
+.stp-table td {
+    padding: 0.55rem 0.75rem;
+    vertical-align: top;
+    color: #333;
+}
+
+.stp-col-name a {
+    color: #1a1a1a;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.stp-col-name a:hover {
+    color: #c8a951;
+    text-decoration: underline;
+}
+
+.stp-col-name    { min-width: 180px; }
+.stp-col-adresse { min-width: 160px; color: #555; }
+.stp-col-opfer   { min-width: 140px; }
+.stp-col-bezirk  { min-width: 120px; }
+.stp-col-jahr    { min-width: 60px; text-align: center; }
+
+/* --- Zustände --- */
+
+.stp-loading,
+.stp-no-results,
+.stp-error {
+    text-align: center;
+    padding: 2rem 1rem;
+    color: #888;
+    font-style: italic;
+}
+
+.stp-error { color: #c00; }
+
+/* --- Paginierung --- */
+
+.stp-pagination {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-top: 1.25rem;
+    align-items: center;
+}
+
+.stp-page-btn {
+    padding: 0.35rem 0.7rem;
+    border: 1px solid #ccc;
+    background: #fff;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    color: #333;
+    transition: background 0.15s, color 0.15s;
+    min-width: 2rem;
+    text-align: center;
+}
+
+.stp-page-btn:hover:not(:disabled) {
+    background: #c8a951;
+    border-color: #c8a951;
+    color: #fff;
+}
+
+.stp-page-btn.is-active {
+    background: #222;
+    border-color: #222;
+    color: #fff;
+    font-weight: 700;
+    cursor: default;
+}
+
+.stp-page-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+.stp-ellipsis {
+    padding: 0.35rem 0.25rem;
+    color: #999;
+    font-size: 0.85rem;
+}
+
+/* --- Skeleton Loader --- */
+
+@keyframes stp-shimmer {
+    0%   { background-position: -400px 0; }
+    100% { background-position:  400px 0; }
+}
+
+.stp-skel {
+    display: block;
+    height: 0.8em;
+    border-radius: 3px;
+    background: linear-gradient(
+            90deg,
+            #e8e8e8 25%,
+            #f5f5f5 50%,
+            #e8e8e8 75%
+    );
+    background-size: 800px 100%;
+    animation: stp-shimmer 1.4s ease-in-out infinite;
+}
+
+.stp-skeleton-row td {
+    padding-top: 0.7rem;
+    padding-bottom: 0.7rem;
+}
+
+/* --- Responsive --- */
+
+@media ( max-width: 600px ) {
+
+    /* --------------------------------------------------------
+       Filter-Controls: 2-Spalten-Grid.
+       Da flex-Werte jetzt nur über .stp-filter-controls > .stp-filter-field
+       gesetzt sind, greifen sie im Grid-Kontext nicht mehr —
+       kein Überschreiben nötig.
+       -------------------------------------------------------- */
+
+    .stp-filter-controls {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.65rem;
+        padding: 0.75rem;
+        align-items: end;
+    }
+
+    /* Zeile 1: Suche — volle Breite */
+    .stp-filter-controls > .stp-filter-search {
+        grid-column: 1 / -1;
+    }
+
+    /* Zeile 2: Opfergruppe — volle Breite (2. Kind-Element) */
+    .stp-filter-controls > .stp-filter-field:nth-child(2) {
+        grid-column: 1 / -1;
+    }
+
+    /* Zeile 3: Bezirk + Jahr — je eine Spalte (Default, kein override nötig) */
+
+    /* Zeile 4: Button — volle Breite */
+    .stp-reset-btn {
+        grid-column: 1 / -1;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    /* --------------------------------------------------------
+       Tabelle → Card-Layout (3 Zeilen pro Eintrag)
+       grid-template-areas weist jedem TD explizit seine
+       Position zu — unabhängig von der DOM-Reihenfolge und
+       davon ob Adresse versteckt ist (sonst würde ein
+       unsichtbares Element trotzdem eine Grid-Zelle belegen).
+       -------------------------------------------------------- */
+
+    .stp-table-wrap {
+        overflow-x: visible;
+    }
+
+    .stp-table,
+    .stp-table tbody,
+    .stp-table tr,
+    .stp-table td,
+    .stp-table th {
+        display: block;
+    }
+
+    /* Thead: visuell verstecken, für Screenreader erhalten */
+    .stp-table thead {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect( 0, 0, 0, 0 );
+        white-space: nowrap;
+        border: 0;
+    }
+
+    /* Jeder TR = Card-Grid */
+    .stp-table tbody tr {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        grid-template-areas:
+            "name   name"
+            "opfer  opfer"
+            "bezirk jahr";
+        gap: 0.1rem 0.5rem;
+        border: 1px solid #e8e8e8;
+        border-radius: 4px;
+        margin-bottom: 0.5rem;
+        padding: 0.6rem 0.75rem;
+        background: #fff;
+    }
+
+    .stp-table tbody tr:hover {
+        background: #fdf8ec;
+    }
+
+    .stp-table td {
+        padding: 0;
+        min-width: 0;
+        vertical-align: unset;
+    }
+
+    /* Zeile 1: Name */
+    .stp-col-name {
+        grid-area: name;
+        font-size: 0.95rem;
+        font-weight: 600;
+        padding-bottom: 0.25rem;
+        border-bottom: 1px solid #f0f0f0;
+        margin-bottom: 0.15rem;
+    }
+
+    /* Adresse ausblenden */
+    .stp-col-adresse {
+        display: none;
+    }
+
+    /* Zeile 2: Opfergruppe */
+    .stp-col-opfer {
+        grid-area: opfer;
+        font-size: 0.82rem;
+        color: #555;
+    }
+
+    /* Zeile 3: Bezirk links, Jahr rechts */
+    .stp-col-bezirk {
+        grid-area: bezirk;
+        font-size: 0.8rem;
+        color: #777;
+    }
+
+    .stp-col-jahr {
+        grid-area: jahr;
+        font-size: 0.8rem;
+        color: #777;
+        text-align: right;
+        min-width: unset;
+    }
+}

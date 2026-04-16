@@ -1,0 +1,139 @@
+{
+    "key": "group_sg_event_details",
+    "title": "Veranstaltungsdetails",
+    "fields": [
+        {
+            "key": "field_sg_event_all_day",
+            "label": "Ganztägig",
+            "name": "_event_all_day",
+            "aria-label": "",
+            "type": "true_false",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "message": "",
+            "default_value": 0,
+            "ui": 1,
+            "ui_on_text": "Ja",
+            "ui_off_text": "Nein",
+            "return_format": "value"
+        },
+        {
+            "key": "field_sg_event_start_date",
+            "label": "Startdatum",
+            "name": "_event_start_date",
+            "aria-label": "",
+            "type": "date_picker",
+            "instructions": "",
+            "required": 1,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "display_format": "d.m.Y",
+            "return_format": "d.m.Y",
+            "first_day": 1,
+            "default_to_current_date": 0,
+            "allow_in_bindings": 1
+        },
+        {
+            "key": "field_sg_event_end_date",
+            "label": "Enddatum",
+            "name": "_event_end_date",
+            "aria-label": "",
+            "type": "date_picker",
+            "instructions": "Nur ausfüllen wenn die Veranstaltung mehrere Tage dauert.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "display_format": "d.m.Y",
+            "return_format": "Y-m-d",
+            "first_day": 1,
+            "default_to_current_date": 0
+        },
+        {
+            "key": "field_sg_event_start_time",
+            "label": "Beginn",
+            "name": "_event_start_time",
+            "aria-label": "",
+            "type": "time_picker",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_sg_event_all_day",
+                        "operator": "!=",
+                        "value": "1"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "display_format": "H:i",
+            "return_format": "H:i",
+            "allow_in_bindings": 1
+        },
+        {
+            "key": "field_sg_event_end_time",
+            "label": "Ende",
+            "name": "_event_end_time",
+            "aria-label": "",
+            "type": "time_picker",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_sg_event_all_day",
+                        "operator": "!=",
+                        "value": "1"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "display_format": "H:i",
+            "return_format": "H:i:s"
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "post_type",
+                "operator": "==",
+                "value": "event"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "",
+    "show_in_rest": 0,
+    "display_title": "",
+    "allow_ai_access": false,
+    "ai_description": "",
+    "modified": 1775566897
+}

@@ -1,0 +1,39 @@
+{
+    "key": "post_type_stolpersteine",
+    "title": "Stolpersteine Graz",
+    "menu_title": "Stolpersteine Graz",
+    "singular_label": "Stolperstein",
+    "plural_label": "Stolpersteine Graz",
+    "post_type": "stolpersteine",
+    "icon": "dashicons-location-alt",
+    "show_in_rest": true,
+    "rest_base": "",
+    "has_archive": true,
+    "publicly_queryable": true,
+    "public": true,
+    "hierarchical": false,
+    "show_ui": true,
+    "show_in_menu": true,
+    "show_in_nav_menus": true,
+    "show_in_admin_bar": true,
+    "menu_position": 5,
+    "capability_type": "post",
+    "supports": [
+        "title",
+        "editor",
+        "thumbnail",
+        "excerpt"
+    ],
+    "taxonomies": [],
+    "rewrite": {
+        "slug": "stolpersteine",
+        "with_front": true,
+        "feeds": false,
+        "pages": true
+    },
+    "query_var": true,
+    "can_export": true,
+    "delete_with_user": false,
+    "exclude_from_search": false,
+    "active": true
+}
