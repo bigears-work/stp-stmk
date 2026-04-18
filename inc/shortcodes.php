@@ -5,9 +5,7 @@
  * @package Stolpersteine
  */
 
-// ============================================================
-// SHORTCODE [stolpersteine_filter]
-// ============================================================
+// Shortcode [stolpersteine_filter]
 
 add_shortcode( 'stolpersteine_filter', 'stolpersteine_filter_shortcode' );
 
@@ -184,17 +182,14 @@ function stolpersteine_filter_shortcode( $atts ) {
     return ob_get_clean();
 }
 
-// ============================================================
-// SHORTCODE [stolpersteine_karte]
-//
-// Attribute:
-//   typ   = 'auto' | 'graz' | 'stmk' | 'both'  (Standard: auto)
-//   hoehe = Pixelwert                             (Standard: 600)
-//   liste = 'ja' | 'nein'                        (Standard: ja)
-//
-// Beispiel Homepage (nur Filter + Pins, keine Listenansicht):
-//   [stolpersteine_karte liste="nein" hoehe="500"]
-// ============================================================
+/**
+ * Shortcode [stolpersteine_karte]
+ *
+ * Attributes:
+ *   typ   = 'auto' | 'graz' | 'stmk' | 'both'  (Default: auto)
+ *   hoehe = pixel value                       (Default: 600)
+ *   liste = 'ja' | 'nein'                        (Default: ja)
+ */
 
 add_shortcode( 'stolpersteine_karte', 'stolpersteine_karte_shortcode' );
 
@@ -379,9 +374,7 @@ function stolpersteine_karte_shortcode( $atts ) {
     return ob_get_clean();
 }
 
-// ============================================================
-// SHORTCODE [stolperstein_karte_einzel]
-// ============================================================
+// Shortcode [stolperstein_karte_einzel]
 
 add_shortcode( 'stolperstein_karte_einzel', 'stolperstein_karte_einzel_shortcode' );
 
@@ -439,9 +432,7 @@ function stolperstein_karte_einzel_shortcode( $atts ) {
 }
 
 
-// ============================================================
-// Dynamic Tag: Beitragsbild-Caption (GenerateBlocks 2.0)
-// ============================================================
+// Dynamic Tag: Featured Image Caption (GenerateBlocks 2.0)
 
 add_action( 'init', function(): void {
 

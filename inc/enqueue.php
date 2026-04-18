@@ -1,15 +1,13 @@
 <?php
 /**
- * Scripts und Styles
+ * Scripts and Styles
  *
  * @package Stolpersteine
  */
 
 define( 'SS_MAPLIBRE_VERSION', '4.7.1' );
 
-// ============================================================
-// PRECONNECT
-// ============================================================
+// Preconnect
 
 add_action( 'wp_head', 'stolpersteine_preconnect', 1 );
 
@@ -28,9 +26,7 @@ function stolpersteine_preconnect() {
     echo '<link rel="dns-prefetch" href="https://tile.openstreetmap.org">' . "\n";
 }
 
-// ============================================================
-// MAPLIBRE
-// ============================================================
+// MapLibre
 
 function stolpersteine_enqueue_maplibre() {
 
@@ -43,7 +39,7 @@ function stolpersteine_enqueue_maplibre() {
 
     if ( ! file_exists( $js_path ) || ! file_exists( $css_path ) ) {
         trigger_error(
-            'Stolpersteine: MapLibre fehlt unter ' . $js_path,
+            'Stolpersteine: MapLibre missing at ' . $js_path,
             E_USER_WARNING
         );
         return;
@@ -69,9 +65,7 @@ function stolpersteine_enqueue_maplibre() {
     );
 }
 
-// ============================================================
-// CSS NON-BLOCKING
-// ============================================================
+// CSS Non-Blocking
 
 add_filter( 'style_loader_tag', 'stolpersteine_nonblocking_css', 10, 2 );
 
@@ -92,9 +86,7 @@ function stolpersteine_nonblocking_css( string $tag, string $handle ): string {
     return $nonblocking . $noscript;
 }
 
-// ============================================================
-// FILTER-ASSETS
-// ============================================================
+// Filter Assets
 
 function stolpersteine_enqueue_filter_assets() {
 
@@ -125,9 +117,7 @@ function stolpersteine_enqueue_filter_assets() {
     ) );
 }
 
-// ============================================================
-// KARTE-ASSETS
-// ============================================================
+// Map Assets
 
 function stolpersteine_enqueue_karte_assets() {
 

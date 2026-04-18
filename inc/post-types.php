@@ -1,8 +1,8 @@
 <?php
 /**
- * Post Types und Taxonomien
- * Werden via ACF Pro (Post Types UI + Taxonomies UI) verwaltet.
- * Die Konfiguration liegt in acf-json/ und wird automatisch synchronisiert.
+ * Post Types and Taxonomies
+ * Managed via ACF Pro (Post Types UI + Taxonomies UI).
+ * Configuration is in acf-json/ and automatically synced.
  *
  * @package Stolpersteine
  */

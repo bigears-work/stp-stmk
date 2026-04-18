@@ -14,8 +14,8 @@
         initEinzelkarte( einzelEl );
     }
 
-    // Übersichtskarte: MapLibre erst initialisieren wenn der Container
-    // in den Viewport kommt. rootMargin '300px' = 300px Vorlauf.
+    // Overview map: Initialize MapLibre only when the container
+    // enters the viewport. rootMargin '300px' = 300px lead.
     function beobachte( el, callback ) {
         if ( ! ( 'IntersectionObserver' in window ) ) {
             callback();
@@ -59,7 +59,7 @@
         var listeEl       = document.getElementById( 'stp-karte-liste' );
         var countEl       = document.getElementById( 'stp-karte-count' );
 
-        // Click-Handler für Listeneinträge — einmalig registrieren.
+        // Click handler for list entries — register once.
         if ( listeEl ) {
             listeEl.addEventListener( 'click', function ( e ) {
                 var item = e.target.closest( '[data-index]' );

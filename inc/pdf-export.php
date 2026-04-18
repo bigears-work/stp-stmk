@@ -28,9 +28,7 @@ function stolpersteine_pdf_export() {
 
     require_once $autoload;
 
-    // --------------------------------------------------------
-    // Post-Daten
-    // --------------------------------------------------------
+// Post Data
     $post_id   = get_the_ID();
     $title     = get_the_title();
     $content   = apply_filters( 'the_content', get_post_field( 'post_content', $post_id ) );
@@ -38,7 +36,7 @@ function stolpersteine_pdf_export() {
 
     $adresse = get_post_meta( $post_id, 'stolpersteine_textmedium', true );
 
-    // Opfergruppen
+    // Victim groups
     $opfergruppen_terms = get_the_terms( $post_id, 'opfergruppen' );
     $opfergruppen       = array();
     if ( is_array( $opfergruppen_terms ) ) {
@@ -47,7 +45,7 @@ function stolpersteine_pdf_export() {
         }
     }
 
-    // Verbundene Gedenksteine via zuordnung
+    // Related memorial stones via zuordnung
     $zuordnung_terms = get_the_terms( $post_id, 'zuordnung' );
     $verbundene      = array();
     if ( is_array( $zuordnung_terms ) ) {
@@ -70,7 +68,7 @@ function stolpersteine_pdf_export() {
         sort( $verbundene );
     }
 
-    // Logo als base64
+    // Logo as base64
     $logo_path = SS_THEME_DIR . '/assets/images/logo.png';
     $logo_src  = file_exists( $logo_path )
         ? 'data:image/png;base64,' . base64_encode( file_get_contents( $logo_path ) )
@@ -80,7 +78,7 @@ function stolpersteine_pdf_export() {
         ? '<img src="' . $logo_src . '" style="height:15mm;width:auto;">'
         : '<strong style="font-size:11pt;">Verein für Gedenkkultur in Graz</strong>';
 
-    // Beitragsbild als base64
+    // Featured image as base64
     $img_html = '';
     if ( $thumbnail ) {
         $img_path = stolpersteine_url_to_path( $thumbnail );
@@ -102,9 +100,7 @@ function stolpersteine_pdf_export() {
         $sidebar_html .= '<p class="sidebar-list">' . implode( '<br>', $verbundene ) . '</p>';
     }
 
-    // --------------------------------------------------------
-    // HTML
-    // --------------------------------------------------------
+// HTML
     $html = '<!DOCTYPE html>
 <html>
 <head>

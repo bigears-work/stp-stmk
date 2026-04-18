@@ -1,12 +1,10 @@
-/* ============================================================
-   Stolpersteine Filter
-   ============================================================ */
+/* Stolpersteine Filter */
 
 .stp-filter-wrap {
     font-size: 0.95rem;
 }
 
-/* --- Filterzeile --- */
+/* Filter row */
 
 .stp-filter-controls {
     display: flex;
@@ -19,14 +17,14 @@
     border-radius: 4px;
 }
 
-/* flex-Werte nur wenn .stp-filter-controls ein Flex-Container ist,
-   d.h. auf Desktop. Auf Mobile wird er zu einem Grid-Container
-   umgebaut — dann greifen diese Werte nicht mehr. */
+/* flex values only if .stp-filter-controls is a flex container,
+   i.e. on desktop. On mobile it becomes a grid container
+   — then these values no longer apply. */
 .stp-filter-controls > .stp-filter-field {
     flex: 1 1 160px;
 }
 
-/* Suchfeld: volle Breite → allein in Zeile 1 */
+/* Search field: full width → alone in row 1 */
 .stp-filter-controls > .stp-filter-search {
     flex: 1 1 100%;
 }
@@ -83,7 +81,7 @@
     border-color: #c8a951;
 }
 
-/* --- Ergebnis-Meta --- */
+/* Result Meta */
 
 .stp-results-meta {
     margin-bottom: 0.5rem;
@@ -91,7 +89,7 @@
     color: #666;
 }
 
-/* --- Tabelle --- */
+/* Table */
 
 .stp-table-wrap {
     overflow-x: auto;

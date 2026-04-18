@@ -8,3 +8,39 @@
  Version:      0.4
  Text Domain:  sto
 */
+
+h1.entry-title {
+    text-align: center;
+    margin-bottom:6rem;
+    margin-top:-2rem;
+}
+
+li.lang-item{
+    position:absolute;
+    top:-2.5rem;
+    right:0;
+}
+
+figure{
+    justify-self: center;
+    margin-top:2rem;
+    margin-bottom: 2rem;
+    font-size:.9rem;
+}
+
+blockquote{
+    border-left: 1rem solid #B2974A;
+    font-style: normal;
+    background-color: #F7F7F5;
+    padding: 2rem;
+    width: 100%;
+    margin: 2rem 0 3rem 0;
+    font-size:1rem;
+}
+
+@media (max-width: 768px) {
+    h1.entry-title {
+        margin-bottom: 4rem;
+        margin-top: -1rem;
+    }
+}

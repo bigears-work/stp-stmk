@@ -1,13 +1,11 @@
 <?php
 /**
- * Admin-Tool: Koordinaten via Nominatim Geocoding
+ * Admin Tool: Coordinates via Nominatim Geocoding
  *
  * @package Stolpersteine
  */
 
-// ============================================================
-// ADMIN-SEITE
-// ============================================================
+// Admin Page
 
 add_action( 'admin_menu', 'stolpersteine_geocoding_menu' );
 
@@ -502,9 +500,7 @@ function stolpersteine_geocoding_page() {
     <?php
 }
 
-// ============================================================
-// ASSETS
-// ============================================================
+// Assets
 
 add_action( 'admin_enqueue_scripts', 'stolpersteine_geocoding_enqueue' );
 
@@ -520,9 +516,7 @@ function stolpersteine_geocoding_enqueue( $hook ) {
     );
 }
 
-// ============================================================
 // AJAX: Batch Geocoding
-// ============================================================
 
 add_action( 'wp_ajax_ss_geocode_single', 'stolpersteine_geocode_single' );
 
@@ -626,9 +620,7 @@ function stolpersteine_geocode_single() {
     ) );
 }
 
-// ============================================================
-// AJAX: Fehler-Liste laden
-// ============================================================
+// AJAX: Load error list
 
 add_action( 'wp_ajax_ss_geocode_fehler_liste', 'stolpersteine_geocode_fehler_liste' );
 
@@ -675,9 +667,7 @@ function stolpersteine_geocode_fehler_liste() {
     wp_send_json_success( array( 'posts' => $result ) );
 }
 
-// ============================================================
-// AJAX: Einzelne Korrektur
-// ============================================================
+// AJAX: Single correction
 
 add_action( 'wp_ajax_ss_geocode_korrektur', 'stolpersteine_geocode_korrektur' );
 
@@ -724,37 +714,35 @@ function stolpersteine_geocode_korrektur() {
     ) );
 }
 
-// ============================================================
-// HILFSFUNKTIONEN
-// ============================================================
+// Helper Functions
 
 /**
- * Baut eine priorisierte Liste von Query-Descriptoren auf.
+ * Builds a prioritized list of query descriptors.
  *
- * Strategie-Reihenfolge:
- *   1. Nominatim Structured Search (PLZ + Ort + optional Straße) mit countrycodes=at
- *   2. Nominatim Structured Search ohne Straße (nur PLZ + Ort)
- *   3. Nominatim Freitext mit countrycodes=at
- *   4. Nominatim Freitext bereinigt (Ortsname entfernt) mit countrycodes=at
- *   5. Photon (Komoot) mit Steiermark-Bounding-Box
- *   6. Photon ohne Bounding-Box (breitere Suche)
+ * Strategy order:
+ *   1. Nominatim Structured Search (ZIP + City + optional Street) with countrycodes=at
+ *   2. Nominatim Structured Search without street (ZIP + City only)
+ *   3. Nominatim Freitext with countrycodes=at
+ *   4. Cleaned freitext (removed city name) with countrycodes=at
+ *   5. Photon (Komoot) with Styria bounding box
+ *   6. Photon without bounding box (broader search)
  *
- * Nominatim Structured ist für kleine AT-Gemeinden deutlich zuverlässiger
- * als Freitext, da PLZ und Ort als separate Parameter übergeben werden.
- * Photon greift auf dieselben OSM-Daten zu, hat aber eine andere
- * Suchmaschine und findet Orte, die Nominatim im Freitext-Modus verfehlt.
+ * Nominatim Structured is significantly more reliable for small Austrian municipalities
+ * than freitext, as ZIP and City are passed as separate parameters.
+ * Photon uses the same OSM data but a different engine and finds locations
+ * that Nominatim misses in freitext mode.
  *
- * @param string $adresse_raw  Rohwert aus dem ACF-Feld.
- * @param string $kontext      z.B. "Steiermark, Österreich".
- * @return array<array{type: string, args: array}> Liste von Query-Descriptoren.
+ * @param string $adresse_raw  Raw value from ACF field.
+ * @param string $kontext      e.g. "Steiermark, Österreich".
+ * @return array<array{type: string, args: array}> List of query descriptors.
  */
 function stolpersteine_geocoding_queries( string $adresse_raw, string $kontext ): array {
 
     $queries = [];
     $adresse = trim( $adresse_raw );
 
-    // --- PLZ und Ort aus Adresse extrahieren ---
-    // Unterstützte Formate:
+    // --- Extract ZIP and City from address ---
+    // Supported formats:
     //   "Schlacherweg 1, 8616 Gasen"
     //   "8616 Gasen"
     //   "Hauptplatz 1, 8010 Graz"
@@ -767,7 +755,7 @@ function stolpersteine_geocoding_queries( string $adresse_raw, string $kontext )
         $ort = trim( $m[2] );
     }
 
-    // Straße: alles vor dem Komma bzw. vor der PLZ
+    // Street: everything before comma or ZIP
     if ( $plz ) {
         $vor_plz = trim( preg_replace( '/,?\s*' . preg_quote( $plz, '/' ) . '.*$/u', '', $adresse ) );
         if ( ! empty( $vor_plz ) ) {
@@ -775,9 +763,7 @@ function stolpersteine_geocoding_queries( string $adresse_raw, string $kontext )
         }
     }
 
-    // --------------------------------------------------------
-    // Strategie 1: Nominatim Structured Search mit Straße
-    // --------------------------------------------------------
+    // --- Strategy 1: Nominatim Structured Search with street ---
     if ( $plz && $ort && $str ) {
         $queries[] = [
             'type' => 'nominatim_structured',
@@ -794,10 +780,8 @@ function stolpersteine_geocoding_queries( string $adresse_raw, string $kontext )
         ];
     }
 
-    // --------------------------------------------------------
-    // Strategie 2: Nominatim Structured Search ohne Straße
-    // (findet zumindest den Ort, wenn die Straße unbekannt ist)
-    // --------------------------------------------------------
+    // --- Strategy 2: Nominatim Structured Search without street ---
+    // (finds at least the city if street is unknown)
     if ( $plz && $ort ) {
         $queries[] = [
             'type' => 'nominatim_structured',
@@ -813,9 +797,7 @@ function stolpersteine_geocoding_queries( string $adresse_raw, string $kontext )
         ];
     }
 
-    // --------------------------------------------------------
-    // Strategie 3: Nominatim Freitext mit countrycodes=at
-    // --------------------------------------------------------
+    // --- Strategy 3: Nominatim Freitext with countrycodes=at ---
     $queries[] = [
         'type' => 'nominatim_free',
         'args' => [
@@ -826,10 +808,7 @@ function stolpersteine_geocoding_queries( string $adresse_raw, string $kontext )
         ],
     ];
 
-    // --------------------------------------------------------
-    // Strategie 4: Freitext bereinigt (bekannte Ortsnamen
-    // am Anfang/Ende entfernen, dann nochmal versuchen)
-    // --------------------------------------------------------
+    // --- Strategy 4: Cleaned freitext (remove known city names at start/end) ---
     $adresse_clean = $adresse;
     foreach ( stolpersteine_ortsnamen_liste() as $name ) {
         $adresse_clean = preg_replace(
@@ -857,12 +836,9 @@ function stolpersteine_geocoding_queries( string $adresse_raw, string $kontext )
         ];
     }
 
-    // --------------------------------------------------------
-    // Strategie 5: Photon (Komoot) mit Steiermark-Bounding-Box
-    // Photon nutzt dieselben OSM-Daten wie Nominatim, hat aber
-    // eine bessere Elasticsearch-basierte Suchmaschine für DACH.
-    // bbox = lon_min,lat_min,lon_max,lat_max (Steiermark grob)
-    // --------------------------------------------------------
+    // --- Strategy 5: Photon (Komoot) with Styria bounding box ---
+    // Photon uses the same OSM data but a better Elasticsearch-based engine for DACH.
+    // bbox = lon_min,lat_min,lon_max,lat_max (Styria roughly)
     $queries[] = [
         'type' => 'photon',
         'args' => [
@@ -873,9 +849,7 @@ function stolpersteine_geocoding_queries( string $adresse_raw, string $kontext )
         ],
     ];
 
-    // --------------------------------------------------------
-    // Strategie 6: Photon ohne Bounding-Box (ganz Österreich)
-    // --------------------------------------------------------
+    // --- Strategy 6: Photon without bounding box (all Austria) ---
     $queries[] = [
         'type' => 'photon',
         'args' => [
@@ -889,7 +863,7 @@ function stolpersteine_geocoding_queries( string $adresse_raw, string $kontext )
 }
 
 /**
- * Bekannte Ortsnamen zur Bereinigung von Freitext-Adressen.
+ * Known city names for cleaning freitext addresses.
  *
  * @return string[]
  */
@@ -912,15 +886,15 @@ function stolpersteine_ortsnamen_liste(): array {
 }
 
 /**
- * Führt eine Geocoding-Anfrage anhand eines Query-Descriptors aus.
+ * Executes a geocoding request based on a query descriptor.
  *
- * Unterstützte Typen:
- *   nominatim_structured  Nominatim mit separaten Adressfeldern
- *   nominatim_free        Nominatim Freitext-Suche
- *   photon                Photon (Komoot), GeoJSON-Response
+ * Supported types:
+ *   nominatim_structured  Nominatim with separate address fields
+ *   nominatim_free        Nominatim freitext search
+ *   photon                Photon (Komoot), GeoJSON response
  *
  * @param array{type: string, args: array} $query
- * @return array{lat: float, lng: float}|null Koordinaten oder null bei Fehler/kein Ergebnis.
+ * @return array{lat: float, lng: float}|null Coordinates or null on error/no result.
  */
 function stolpersteine_nominatim_request( array $query ): ?array {
 
@@ -928,10 +902,8 @@ function stolpersteine_nominatim_request( array $query ): ?array {
 
     switch ( $query['type'] ) {
 
-        // --------------------------------------------------------
-        // Nominatim — Structured und Freitext funktionieren gleich,
-        // nur die args unterscheiden sich.
-        // --------------------------------------------------------
+        // Nominatim — Structured and Freitext work the same,
+        // only the args differ.
         case 'nominatim_structured':
         case 'nominatim_free':
 
@@ -956,10 +928,8 @@ function stolpersteine_nominatim_request( array $query ): ?array {
                 'lng' => (float) $body[0]['lon'],
             ];
 
-        // --------------------------------------------------------
-        // Photon (Komoot) — liefert GeoJSON
+        // Photon (Komoot) — returns GeoJSON
         // features[0].geometry.coordinates = [lng, lat]
-        // --------------------------------------------------------
         case 'photon':
 
             $api_url  = 'https://photon.komoot.io/api/?' . http_build_query( $query['args'] );
@@ -978,7 +948,7 @@ function stolpersteine_nominatim_request( array $query ): ?array {
                 return null;
             }
 
-            // Alle Features prüfen — das erste das in Österreich liegt gewinnt.
+            // Check all features — the first one located in Austria wins.
             foreach ( $body['features'] as $feature ) {
                 $coords = $feature['geometry']['coordinates'] ?? [];
                 if ( empty( $coords[0] ) || empty( $coords[1] ) ) {
@@ -988,7 +958,7 @@ function stolpersteine_nominatim_request( array $query ): ?array {
                 $lng = (float) $coords[0];
                 $lat = (float) $coords[1];
 
-                // Sanity-Check: Koordinaten müssen in Österreich liegen (grobe Bounding Box).
+                // Sanity check: coordinates must be in Austria (rough bounding box).
                 if ( $lat >= 46.0 && $lat <= 49.1 && $lng >= 9.5 && $lng <= 17.2 ) {
                     return [ 'lat' => $lat, 'lng' => $lng ];
                 }
@@ -1002,7 +972,7 @@ function stolpersteine_nominatim_request( array $query ): ?array {
 }
 
 /**
- * Speichert Koordinaten als ACF-kompatibles Post-Meta.
+ * Saves coordinates as ACF-compatible post meta.
  *
  * @param int    $post_id
  * @param float  $lat
@@ -1020,10 +990,7 @@ function stolpersteine_koordinaten_speichern( int $post_id, float $lat, float $l
     update_post_meta( $post_id, '_koordinaten', 'field_ss_koordinaten' );
 }
 
-// ============================================================
-// ADMIN-SEITE: META-MIGRATION
-// WordPress Backend → Werkzeuge → Meta-Migration
-// ============================================================
+// Admin Page: Meta Migration
 
 add_action( 'admin_menu', 'stolpersteine_migration_menu' );
 
@@ -1256,7 +1223,7 @@ function stolpersteine_migrate_single() {
 
     $post_id = $posts[0];
 
-    // Bereits migriert?
+    // Already migrated?
     $existing_ref = get_post_meta( $post_id, '_stolpersteine_textmedium', true );
     if ( $existing_ref === 'field_ss_adresse' ) {
         wp_send_json_success( array(
@@ -1266,7 +1233,7 @@ function stolpersteine_migrate_single() {
         ) );
     }
 
-    // Wert holen
+    // Get value
     $value = get_post_meta( $post_id, '_stolpersteine_textmedium', true );
 
     if ( empty( $value ) ) {
@@ -1278,10 +1245,10 @@ function stolpersteine_migrate_single() {
         ) );
     }
 
-    // 1. Wert unter ACF-Feldnamen speichern
+    // 1. Save value under ACF field name
     update_post_meta( $post_id, 'stolpersteine_textmedium', $value );
 
-    // 2. ACF-Referenz setzen
+    // 2. Set ACF reference
     update_post_meta( $post_id, '_stolpersteine_textmedium', 'field_ss_adresse' );
 
     wp_send_json_success( array(

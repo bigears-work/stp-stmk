@@ -1,16 +1,12 @@
 <?php
 /**
- * Event Queries für GenerateBlocks Query Loop
+ * Event Queries for GenerateBlocks Query Loop
  *
- * Filtert die WP_Query-Args des GB Query Loop Blocks anhand
- * einer CSS-Klasse, die im Block Editor vergeben wird:
+ * Filters the WP_Query args of the GB Query Loop block based on
+ * a CSS class assigned in the Block Editor:
  *
- *   sg-events-upcoming → Kommende Events (>= heute, ASC)
- *   sg-events-past     → Vergangene Events (< heute, DESC)
- *
- * Einrichtung im Block Editor:
- *   Query Block → Erweitert → Zusätzliche CSS-Klasse(n)
- *   → "sg-events-upcoming" oder "sg-events-past" eintragen
+ *   sg-events-upcoming → Upcoming events (>= today, ASC)
+ *   sg-events-past     → Past events (< today, DESC)
  *
  * @package Stolpersteine
  */
@@ -23,13 +19,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 add_filter( 'generateblocks_query_loop_args', function( array $query_args, array $attributes ): array {
 
-	// Nur im Frontend ausführen.
+	// Only run on the frontend.
 	if ( is_admin() ) {
 		return $query_args;
 	}
 
 	$classes = $attributes['className'] ?? '';
-	$today   = wp_date( 'Y-m-d' ); // Lokale Zeitzone (Europe/Vienna).
+	$today   = wp_date( 'Y-m-d' ); // Local time zone.
 
 	if ( str_contains( $classes, 'sg-events-upcoming' ) ) {
 		$query_args = array_merge( $query_args, [

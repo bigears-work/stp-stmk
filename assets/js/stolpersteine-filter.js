@@ -14,7 +14,7 @@
     var debounceTimer = null;
     var currentXhr    = null;
 
-    // Standard: alphabetisch nach Nachname aufsteigend
+    // Default: alphabetical by last name ascending
     var sortCol = 'name';
     var sortDir = 'asc';
 
@@ -26,9 +26,7 @@
         { key: 'jahr',    label: 'Jahr' },
     ];
 
-    // --------------------------------------------------------
-    // Filter-State lesen
-    // --------------------------------------------------------
+    // Filter State
     function getFilterState() {
         return {
             post_type    : getVal( 'post_type' ),
@@ -44,9 +42,7 @@
         return el ? el.value.trim() : '';
     }
 
-    // --------------------------------------------------------
-    // URL bauen
-    // --------------------------------------------------------
+    // Build URL
     function buildUrl() {
         var state = getFilterState();
         var params = [
@@ -62,9 +58,7 @@
         return stpData.apiBase + '?' + params.join( '&' );
     }
 
-    // --------------------------------------------------------
     // XHR
-    // --------------------------------------------------------
     function fetchData( callback ) {
         if ( currentXhr ) currentXhr.abort();
 
@@ -91,12 +85,7 @@
         xhr.send();
     }
 
-    // --------------------------------------------------------
-    // Term-Normalisierung
-    // Alte API liefert ["Jüdische Opfer"] (Strings),
-    // neue API liefert [{name, slug}] (Objekte).
-    // Einmalig beim Laden normalisieren — danach immer Objekte.
-    // --------------------------------------------------------
+    // Term Normalization
     function normalizeTerm( term ) {
         if ( typeof term === 'string' ) {
             return { name: term, slug: term.toLowerCase().replace( /[äöü]/g, function(c) {
