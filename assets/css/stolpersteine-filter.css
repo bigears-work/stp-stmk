@@ -63,6 +63,12 @@
     letter-spacing: 0.03em;
 }
 
+.stp-filter-field input[type="search"] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
 .stp-filter-field input,
 .stp-filter-field select {
     padding: 0.45rem 0.65rem;
