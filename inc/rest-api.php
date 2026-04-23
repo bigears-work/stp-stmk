@@ -157,7 +157,24 @@ function stolpersteine_filter_callback( $request ) {
         $query_args['s'] = $search;
     }
 
-    $query    = new WP_Query( $query_args );
+    if ( '' !== $search ) {
+        // Relevance sort: title matches first, body-text matches second.
+        // Uses a CASE expression in ORDER BY so pagination stays correct across all pages.
+        // The closure is removed immediately after the query to prevent filter leak.
+        global $wpdb;
+        $like           = '%' . $wpdb->esc_like( $search ) . '%';
+        $like_safe      = esc_sql( $like );
+        $posts_table    = $wpdb->posts;
+        $orderby_filter = function () use ( $like_safe, $posts_table ) {
+            return "CASE WHEN {$posts_table}.post_title LIKE '{$like_safe}' THEN 0 ELSE 1 END ASC,
+                    {$posts_table}.post_title ASC";
+        };
+        add_filter( 'posts_orderby', $orderby_filter );
+        $query = new WP_Query( $query_args );
+        remove_filter( 'posts_orderby', $orderby_filter );
+    } else {
+        $query = new WP_Query( $query_args );
+    }
     $map_only    = $request->get_param( 'map_only' );
     $filter_only = $request->get_param( 'filter_only' );
     $results     = array();

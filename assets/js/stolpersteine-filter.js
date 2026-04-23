@@ -1,3 +1,14 @@
+if ( ! Element.prototype.closest ) {
+    Element.prototype.closest = function ( sel ) {
+        var el = this;
+        while ( el && el.nodeType === 1 ) {
+            if ( el.matches( sel ) ) return el;
+            el = el.parentElement;
+        }
+        return null;
+    };
+}
+
 ( function () {
     'use strict';
 
@@ -15,8 +26,9 @@
     var currentXhr    = null;
 
     // Default: alphabetical by last name ascending
-    var sortCol = 'name';
-    var sortDir = 'asc';
+    var sortCol       = 'name';
+    var sortDir       = 'asc';
+    var userHasSorted = false; // true once user explicitly clicks a column header
 
     var COLUMNS = [
         { key: 'name',    label: 'Name' },
@@ -230,9 +242,8 @@
                 sortDir = 'asc';
             }
 
-            // currentPage = 1; // Keep page when sorting? Usually yes, but user might want to stay. 
-            // Standard is to go to page 1.
-            currentPage = 1; 
+            userHasSorted = true;
+            currentPage   = 1;
             renderTable();
             // updateTheadState() is called inside renderTable -> fetchData -> callback
         } );
@@ -247,7 +258,7 @@
             var btn      = buttons[ i ];
             var col      = btn.getAttribute( 'data-col' );
             var th       = btn.parentElement;
-            var isActive = sortCol === col;
+            var isActive = userHasSorted && sortCol === col;
 
             th.className = 'stp-col-' + col + ( isActive ? ' is-sorted' : '' );
             th.setAttribute( 'aria-sort', isActive
@@ -261,8 +272,8 @@
     }
 
     function getSortIcon( col ) {
-        var upOpacity   = ( sortCol === col && sortDir === 'asc' )  ? '1' : '0.35';
-        var downOpacity = ( sortCol === col && sortDir === 'desc' ) ? '1' : '0.35';
+        var upOpacity   = ( userHasSorted && sortCol === col && sortDir === 'asc' )  ? '1' : '0.35';
+        var downOpacity = ( userHasSorted && sortCol === col && sortDir === 'desc' ) ? '1' : '0.35';
 
         return '<svg width="10" height="12" viewBox="0 0 10 12">' +
             '<path d="M5 1l3 4H2z" fill="currentColor" opacity="' + upOpacity + '"/>' +
@@ -308,6 +319,10 @@
             var results    = data.results || [];
             var totalItems = data.total   || 0;
             var totalPages = data.total_pages || 1;
+
+            if ( userHasSorted ) {
+                results = sortResults( results );
+            }
 
             if ( ! results.length ) {
                 tbody.innerHTML =
@@ -414,6 +429,7 @@
     var searchEl = form.elements[ 'search' ];
     if ( searchEl ) {
         function onSearchInput() {
+            userHasSorted = false;
             clearTimeout( debounceTimer );
             debounceTimer = setTimeout( function () {
                 currentPage = 1;
@@ -432,7 +448,8 @@
                 selects[ i ].value = '';
             }
             if ( searchEl ) searchEl.value = '';
-            currentPage = 1;
+            userHasSorted = false;
+            currentPage   = 1;
             renderTable();
         } );
     }
