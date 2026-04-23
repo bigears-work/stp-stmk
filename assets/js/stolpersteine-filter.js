@@ -413,13 +413,15 @@
 
     var searchEl = form.elements[ 'search' ];
     if ( searchEl ) {
-        searchEl.addEventListener( 'input', function () {
+        function onSearchInput() {
             clearTimeout( debounceTimer );
             debounceTimer = setTimeout( function () {
                 currentPage = 1;
                 renderTable();
             }, 350 );
-        } );
+        }
+        searchEl.addEventListener( 'input',  onSearchInput );
+        searchEl.addEventListener( 'search', onSearchInput ); // Escape key + ✕ button in Firefox
     }
 
     var resetBtn = document.getElementById( 'stp-reset' );
